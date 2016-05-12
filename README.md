@@ -1,1 +1,1 @@
-# Automatic-Factoring-Calculator
+This is a project in which we will divide up the bits and pieces needed to solve the quadratic formula from input, and then eventually combine each step together into one complete, working, Python, Factoring Calculator.
