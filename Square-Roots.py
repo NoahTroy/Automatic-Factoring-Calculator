@@ -51,7 +51,7 @@ for efficiency and convenience.'''
 	if len(quotientsthatareints) == 0:
 		if not HayImaginaryUnit:
 			UnderSqrt = str(UnderSqrt)
-			Result = UnderSqrt
+			Result = ('√' + UnderSqrt)
 		else:
 			UnderSqrt = str(UnderSqrt)
 			Result = ('i ' + '√' + UnderSqrt)
