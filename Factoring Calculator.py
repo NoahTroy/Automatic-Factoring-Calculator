@@ -113,28 +113,58 @@ def CalculateSqrt(a , b , c):
 	UnderSqrt = ((b**2)-(4*(a)*(c)))
 	SolveUnderSquareRoot(UnderSqrt)
 def SolveFrontHalf(a , b):
+#Fully identify the divisor and convert b to -b:
 	global Divisor
 	Divisor = (2*(a))
-	def FrontSolve(b):
+	def FrontSolve(b , Divisor):
 		NEGATIVEb = ((b-b)-b)
-		if (NEGATIVEb >= Divisor):
-			biggernumber = NEGATIVEb
-			smallernumber = Divisor
-		else:
-			biggernumber = Divisor
-			smallernumber = NEGATIVEb
-		FactorsBiggerNumber = []
-		FactorsSmallerNumber = []
-		for i in range(1 , biggernumber):
-			isinteger = biggernumber/i
-                	if isinteger == int(isinteger):
-                        	FactorsBiggerNumber.append(i)
-		for i in range(1 , smallernumber):
-			isinteger = smallernumber/i
+		FactorsNEGATIVEb = []
+		FactorsDivisor = []
+#Make each number positive whilst finding their common factors:
+		NEGATIVEbPositive = NEGATIVEb
+		DivisorPositive = Divisor
+		if NEGATIVEb < 0:
+			NEGATIVEbPositive = ((NEGATIVEb-NEGATIVEb)-NEGATIVEb)
+		if Divisor < 0:
+			DivisorPositive = ((Divisor-Divisor)-Divisor)
+#Identify the factors of each number:
+		for i in range(1 , (NEGATIVEbPositive + 1)):
+			isinteger = NEGATIVEbPositive/i
 			if isinteger == int(isinteger):
-				FactorsSmallerNumber.append(i)
-######## ADD CODE HERE TO COMPARE THE TWO LISTS AND IDENTIFY COMMON FACTORS, THEN USE THAT TWO SIMPLIFY THE FRACTION AS MUCH AS POSSIBLE.
-
+                        	FactorsNEGATIVEb.append(i)
+		for i in range(1 , (DivisorPositive + 1)):
+			isinteger = DivisorPositive/i
+			if isinteger == int(isinteger):
+				FactorsDivisor.append(i)
+#Define a CommonFactors list:
+		CommonFactors = []
+#Find the common factor(s) between the two numbers (if there is one):
+		for i in FactorsDivisor:
+			if (i in FactorsNEGATIVEb):
+				CommonFactors.append(i)
+#Find the greatest common factor:
+		if (len(CommonFactors) > 0):
+			GCFindex = ((len(CommonFactors)) - 1)
+			GCF = CommonFactors[GCFindex]
+#Divide both numbers by the GCF to simplify them:
+			NEGATIVEbSimplified = NEGATIVEb/GCF
+			DivisorSimplified = Divisor/GCF
+#Define global results variable:
+			global FrontSideSolveResult
+#Keep them as a fraction if they don't divide evenly, and vice versa:
+			isinteger = NEGATIVEbSimplified/DivisorSimplified
+			if isinteger == int(isinteger):
+				FrontSideSolveResult = str(isinteger)
+			else:
+				NEGATIVEbSimplified = str(int(NEGATIVEbSimplified))
+				DivisorSimplified = str(int(DivisorSimplified))
+			FrontSideSolveResult = (NEGATIVEbSimplified + '/' + DivisorSimplified)
+		else:
+			NEGATIVEb = str(int(NEGATIVEb))
+			Divisor = str(int(Divisor))
+			global FrontSideSolveResult
+			FrontSideSolveResult = (NEGATIVEb + '/' + Divisor)
+	FrontSolve(b , Divisor)
 
 
 
@@ -147,3 +177,4 @@ def SolveFrontHalf(a , b):
 CalculateSqrt(a , b , c)
 SolveFrontHalf(a , b)
 print(UnderSqrtResult)
+print(FrontSideSolveResult)
