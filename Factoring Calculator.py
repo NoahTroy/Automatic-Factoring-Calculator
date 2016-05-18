@@ -1,4 +1,3 @@
-#Print starting explanatory message then ask for input:
 print('Please Enter The a, b, and c terms from the polynomial \nyou wish to have factored.\nPlease make sure the terms are from a polynomial in standard form: \nax^2+bx+c\n')
 a = input('a-term:\t')
 b = input('b-term:\t')
@@ -10,6 +9,7 @@ try:
 	c = int(c)
 except:
 	print('\nThere was an error processing your input. \nPlease make sure all of your terms are valid integers and try again.')
+	exit()
 #Define all of the necessary functions:
 def CalculateSqrt(a , b , c):
 	#Define A Function To Which We Will Supply The Integers Under The Square Root Sign For Solving:
@@ -110,12 +110,112 @@ def CalculateSqrt(a , b , c):
 					biggestdivisorsimplified = str(biggestdivisorsimplified)
 					remainder = str(remainder)
 					UnderSqrtResult = (biggestdivisorsimplified + 'i' + ' √' + remainder)
+#Define a function to simplify under the square root:
+	def SimplifyUnderSqrt(UnderSqrtResult):
+#Import string for more advanced string manipulation:
+		import string
+		global Divisor
+		Divisor = (2*(a))
+#Replace the number that can be simplified with variable "x", so that we may add back in the simplified version of the number later:
+		UnderSqrtResultWithVariable = ''
+#Edit the UnderSqrtResult to only simplify non-i and non-still-under-sqrt numbers:
+		CleanedUnderSqrtResult = ''
+		Counter = 0
+		if (('√' in UnderSqrtResult) or ('i' in UnderSqrtResult)):
+			for i in UnderSqrtResult:
+				if (i == 'i'):
+					UnderSqrtResultWithVariable += UnderSqrtResult[Counter]
+					Counter += 1
+					continue
+				if (i == ' '):
+					UnderSqrtResultWithVariable += UnderSqrtResult[Counter]
+					Counter += 1
+					continue
+				if (i == '√'):
+					UnderSqrtResultWithVariable += UnderSqrtResult[Counter]
+					Counter += 1
+					for g in range(Counter , (len(UnderSqrtResult))):
+						UnderSqrtResultWithVariable += UnderSqrtResult[g]
+					break
+				CleanedUnderSqrtResult += UnderSqrtResult[Counter]
+				if not (UnderSqrtResult[(Counter - 1)] == 'x'):
+					UnderSqrtResultWithVariable += 'x'
+				Counter += 1
+		else:
+			CleanedUnderSqrtResult = UnderSqrtResult
+			UnderSqrtResultWithVariable += 'x'
+		if len(CleanedUnderSqrtResult) < 0:
+			CleanedUnderSqrtResult = int(CleanedUnderSqrtResult)				
+#Make each number (put them back to ints) positive whilst finding their common factors:
+		Divisor = int(Divisor)
+		UnderSqrtResultPositive = CleanedUnderSqrtResult
+		DivisorPositive = Divisor
+		global FactorsDivisor
+		FactorsDivisor = []
+		if Divisor < 0:
+			DivisorPositive = ((Divisor-Divisor)-Divisor)
+		FactorsUnderSqrtResult = []
+		if (len(CleanedUnderSqrtResult) > 0):
+			CleanedUnderSqrtResult = int(CleanedUnderSqrtResult)
+			if CleanedUnderSqrtResult < 0:
+				UnderSqrtResultPositive = ((CleanedUnderSqrtResult-CleanedUnderSqrtResult)-CleanedUnderSqrtResult)
+	#Identify the factors of each number:
+			UnderSqrtResultPositive = int(UnderSqrtResultPositive)
+			for i in range(1 , (UnderSqrtResultPositive + 1)):
+				isinteger = UnderSqrtResultPositive/i
+				if isinteger == int(isinteger):
+	                        	FactorsUnderSqrtResult.append(i)
+			for i in range(1 , (DivisorPositive + 1)):
+				isinteger = DivisorPositive/i
+				if isinteger == int(isinteger):
+					FactorsDivisor.append(i)
+	#Define a CommonFactors list:
+			CommonFactors = []
+	#Find the common factor(s) between the two numbers (if there is one):
+			for i in FactorsDivisor:
+				if (i in FactorsUnderSqrtResult):
+					CommonFactors.append(i)
+	#Define global results variable:
+				global RightSideSolveResult
+	#Find the greatest common factor:
+			if (len(CommonFactors) > 0):
+				GCFindex = ((len(CommonFactors)) - 1)
+				GCF = CommonFactors[GCFindex]
+	#Divide both numbers by the GCF to simplify them:
+				UnderSqrtResultSimplified = CleanedUnderSqrtResult/GCF
+				DivisorSimplified = Divisor/GCF
+	#Keep them as a fraction if they don't divide evenly, and vice versa:
+				isinteger = UnderSqrtResultSimplified/DivisorSimplified
+				if isinteger == int(isinteger):
+					RightSideSolveResult = str(isinteger)
+					if not (RightSideSolveResult == 1):
+						RightSideSolveResult = UnderSqrtResultWithVariable.replace('x' , RightSideSolveResult)
+					else:
+						RightSideSolveResult = UnderSqrtResultWithVariable.replace('x' , '')
+				else:
+					UnderSqrtResultSimplified = str(int(UnderSqrtResultSimplified))
+					if not (int(UnderSqrtResultSimplified) == 1):
+						UnderSqrtResultSimplified = UnderSqrtResultWithVariable.replace('x' , UnderSqrtResultSimplified)
+					else:
+						UnderSqrtResultSimplified = UnderSqrtResultWithVariable.replace('x' , '')
+					DivisorSimplified = str(int(DivisorSimplified))
+				RightSideSolveResult = ('(' + UnderSqrtResultSimplified + ')' + '/' + DivisorSimplified)
+			else:
+				CleanedUnderSqrtResult = str(int(CleanedUnderSqrtResult))
+				if not (int(CleanedUnderSqrtResult) == 1):
+					CleanedUnderSqrtResult = UnderSqrtResultWithVariable.replace('x' , CleanedUnderSqrtResult)
+				else:
+					CleanedUnderSqrtResult = UnderSqrtResultWithVariable.replace('x' , '')
+				Divisor = str(int(Divisor))
+				RightSideSolveResult = ('(' + CleanedUnderSqrtResult + ')' + '/' + Divisor)
+		else:
+			RightSideSolveResult = ('(' + UnderSqrtResult + ')' + '/' + Divisor)
+#Run the main function to solve under the square root (after solving for 1 number under the square root):
 	UnderSqrt = ((b**2)-(4*(a)*(c)))
 	SolveUnderSquareRoot(UnderSqrt)
-def SolveFrontHalf(a , b):
-#Fully identify the divisor and convert b to -b:
-	global Divisor
-	Divisor = (2*(a))
+	SimplifyUnderSqrt(UnderSqrtResult)
+def SolveFrontHalf(a , b , Divisor):
+#Identify the divisor and convert b to -b:
 	def FrontSolve(b , Divisor):
 		NEGATIVEb = ((b-b)-b)
 		FactorsNEGATIVEb = []
@@ -142,6 +242,8 @@ def SolveFrontHalf(a , b):
 		for i in FactorsDivisor:
 			if (i in FactorsNEGATIVEb):
 				CommonFactors.append(i)
+#Define global results variable:
+			global FrontSideSolveResult
 #Find the greatest common factor:
 		if (len(CommonFactors) > 0):
 			GCFindex = ((len(CommonFactors)) - 1)
@@ -149,8 +251,6 @@ def SolveFrontHalf(a , b):
 #Divide both numbers by the GCF to simplify them:
 			NEGATIVEbSimplified = NEGATIVEb/GCF
 			DivisorSimplified = Divisor/GCF
-#Define global results variable:
-			global FrontSideSolveResult
 #Keep them as a fraction if they don't divide evenly, and vice versa:
 			isinteger = NEGATIVEbSimplified/DivisorSimplified
 			if isinteger == int(isinteger):
@@ -158,13 +258,16 @@ def SolveFrontHalf(a , b):
 			else:
 				NEGATIVEbSimplified = str(int(NEGATIVEbSimplified))
 				DivisorSimplified = str(int(DivisorSimplified))
+			NEGATIVEbSimplified = str(NEGATIVEbSimplified)
+			DivisorSimplified = str(DivisorSimplified)
 			FrontSideSolveResult = (NEGATIVEbSimplified + '/' + DivisorSimplified)
 		else:
 			NEGATIVEb = str(int(NEGATIVEb))
 			Divisor = str(int(Divisor))
-			global FrontSideSolveResult
 			FrontSideSolveResult = (NEGATIVEb + '/' + Divisor)
 	FrontSolve(b , Divisor)
+
+	
 
 
 
@@ -175,6 +278,6 @@ def SolveFrontHalf(a , b):
 
 #Run what is currently calculated:
 CalculateSqrt(a , b , c)
-SolveFrontHalf(a , b)
-print(UnderSqrtResult)
+SolveFrontHalf(a , b , Divisor)
+print(RightSideSolveResult)
 print(FrontSideSolveResult)
