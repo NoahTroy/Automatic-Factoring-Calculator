@@ -126,7 +126,7 @@ else:
 		range2 = (Divisor + 1)
 	elif (Divisor < 0):
 		range1 = Divisor
-		range2 = ((Divisor - Divisor) - Divisor)
+		range2 = (((Divisor - Divisor) - Divisor) + 1)
 	else:
 		##############################################FIX##############################################
 		print('YOUR A-TERM IS A ZERO, THIS IS UNACCEPTABLE AT THE MOMENT AND HAS CRASHED MY CALCULATOR!!!')
@@ -137,6 +137,7 @@ else:
 	FactorsForDivisor = []
 	FactorsForbiggestdivisorsimplified = []
 	CommonFactors = []
+
 	#Factors of Divisor
 	for i in range(range1 , range2):
 		if i == 0:
@@ -161,11 +162,16 @@ else:
 	else:
 		GCF = -1
 
-		#Now simplify both the Divisor and the biggestdivisorsimplified:
-		Divisor = (Divisor / GCF)
-		biggestdivisorsimplified = (biggestdivisorsimplified / GCF)
-		Divisor = int(Divisor)
-		biggestdivisorsimplified = int(biggestdivisorsimplified)
+	#Now simplify both the Divisor and the biggestdivisorsimplified:
+	Divisor = (Divisor / GCF)
+	biggestdivisorsimplified = (biggestdivisorsimplified / GCF)
+	Divisor = int(Divisor)
+	biggestdivisorsimplified = int(biggestdivisorsimplified)
+
+	#Put the negatives in their rightful place:
+	if ((Divisor < 0) and (biggestdivisorsimplified >= 0)):
+		Divisor = ((Divisor - Divisor) - Divisor)
+		biggestdivisorsimplified = ((biggestdivisorsimplified - biggestdivisorsimplified) - biggestdivisorsimplified)
 	
 	#Assign the final results for under the square root to UnderSqrtResult in the correct format/syntax:
 	#If the remainder is a one, get rid of it:
@@ -197,11 +203,28 @@ else:
 #Convert the Divisor and UnderSqrtResult to strings for presentation:
 UnderSqrtResult = str(UnderSqrtResult)
 Divisor = str(Divisor)
-#If the UnderSqrtResult is equal to 0, just make the entire RightSideSolveResult 0:
-if UnderSqrtResult == '0':
-	RightSideSolveResult = '0'
+
+#if the Divisor is a 1, just get rid of it:
+if (Divisor == '1'):
+	#If the UnderSqrtResult is equal to 0, just make the entire RightSideSolveResult 0:
+	if UnderSqrtResult == '0':
+		RightSideSolveResult = '0'
+	else:
+		RightSideSolveResult = ('(' + UnderSqrtResult + ')')
 else:
-	RightSideSolveResult = ('(' + UnderSqrtResult + '/' + Divisor + ')')
+	#If the UnderSqrtResult is equal to 0, just make the entire RightSideSolveResult 0:
+	if UnderSqrtResult == '0':
+		RightSideSolveResult = '0'
+	else:
+		RightSideSolveResult = ('(' + '(' + UnderSqrtResult + ')' + ' / ' + Divisor + ')')
+
+#Save these values to help with furthur simplification down the road if necessary (Used for later on to add numbers with the same denominators):
+try:
+	Top = int(UnderSqrtResult)
+	CanBeAdded = True
+except:
+	CanBeAdded = False
+Bottom = int(Divisor)
 
 
 
@@ -305,10 +328,20 @@ if ((FirstSideSolveResult == '0') and (RightSideSolveResult != '0')):
 elif ((FirstSideSolveResult != '0') and (RightSideSolveResult == '0')):
 	x1 = (FirstSideSolveResult)
 	x2 = (FirstSideSolveResult)
-else:
+elif ((FirstSideSolveResult == '0') and (RightSideSolveResult == '0')):
 	x1 = '0'
 	x2 = '0'
+else:
+	#Check to make sure the problem can't be further simplified by adding the numerators if the denominators are the same:
+	if (((int(Denominator)) == Bottom) and CanBeAdded):
+		SimplifiedNumeratorPos = str(((int(Numerator)) + Top))
+		SimplifiedNumeratorNeg = str(((int(Numerator)) - Top))
+		x1 = (SimplifiedNumeratorPos)
+		x2 = (SimplifiedNumeratorNeg)
+	else:
+		x1 = (FirstSideSolveResult + ' + ' + RightSideSolveResult)
+		x2 = (FirstSideSolveResult + ' - ' + RightSideSolveResult)
 	
 #Declare Final Results:
 FinalResults = ('x = ' + x1 + '\nx = ' + x2)
-print('\n\n\n\nRESULTS:\n\n' , FinalResults , sep = '' , end = '')
+print('\n\n\n\nRESULTS:\n\n' , FinalResults , sep = '')
