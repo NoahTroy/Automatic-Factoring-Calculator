@@ -336,8 +336,117 @@ else:
 	if (((int(Denominator)) == Bottom) and CanBeAdded):
 		SimplifiedNumeratorPos = str(((int(Numerator)) + Top))
 		SimplifiedNumeratorNeg = str(((int(Numerator)) - Top))
-		x1 = (SimplifiedNumeratorPos)
-		x2 = (SimplifiedNumeratorNeg)
+
+		#Simplify the fractions down even furthur if possible:
+		#First put the negatives in their rightful places:
+		if ((Bottom < 0) and ((int(SimplifiedNumeratorPos)) >= 0)):
+			Bottom = ((Bottom - Bottom) - Bottom)
+			SimplifiedNumeratorPos = int(SimplifiedNumeratorPos)
+			SimplifiedNumeratorPos = ((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos)
+		if ((Bottom < 0) and ((int(SimplifiedNumeratorNeg)) >= 0)):
+			Bottom = ((Bottom - Bottom) - Bottom)
+			SimplifiedNumeratorNeg = int(SimplifiedNumeratorNeg)
+			SimplifiedNumeratorNeg = ((SimplifiedNumeratorNeg - SimplifiedNumeratorNeg) - SimplifiedNumeratorNeg)
+		if ((Bottom < 0) and ((int(SimplifiedNumeratorPos)) < 0)):
+			Bottom = ((Bottom - Bottom) - Bottom)
+			SimplifiedNumeratorPos = int(SimplifiedNumeratorPos)
+			SimplifiedNumeratorPos = ((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos)
+			
+
+
+
+		#We must now find all of the common factors, then find the greatest common factor, and divide each by the GCF, to simplify the numbers even further:
+		FactorsOfSimplifiedNumeratorPos = []
+		FactorsOfSimplifiedNumeratorNeg = []
+		FactorsOfBottom = []
+		CommonFactorsOfNumPosAndBottom = []
+		CommonFactorsOfNumNegAndBottom = []
+		
+		#Identify the ranges for SimplifiedNumeratorPos and SimplifiedNumeratorNeg:
+		#First convert each back into integers:
+		SimplifiedNumeratorPos = int(SimplifiedNumeratorPos)
+		SimplifiedNumeratorNeg = int(SimplifiedNumeratorNeg)
+
+		if SimplifiedNumeratorPos < 0:
+			range1 = SimplifiedNumeratorPos
+			range2 = (((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos) + 1)
+		elif SimplifiedNumeratorPos > 0:
+			range1 = ((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos)
+			range2 = (SimplifiedNumeratorPos + 1)
+		else:
+			print('UNKNOWN ERROR')
+			exit()
+
+		if SimplifiedNumeratorNeg < 0:
+			range1b = SimplifiedNumeratorNeg
+			range2b = (((SimplifiedNumeratorNeg - SimplifiedNumeratorNeg) - SimplifiedNumeratorNeg) + 1)
+		elif SimplifiedNumeratorNeg > 0:
+			range1b = ((SimplifiedNumeratorNeg - SimplifiedNumeratorNeg) - SimplifiedNumeratorNeg)
+			range2b = (SimplifiedNumeratorNeg + 1)
+		else:
+			print('UNKNOWN ERROR')
+			exit()
+
+		#Factors of SimplifiedNumeratorPos:
+		for i in range(range1 , range2):
+			if i == 0:
+				continue
+			CurrentNumerator = (SimplifiedNumeratorPos / i)
+			if (CurrentNumerator == (int(CurrentNumerator))):
+				FactorsOfSimplifiedNumeratorPos.append(i)
+		#Factors of SimplifiedNumeratorNeg:
+		for i in range(range1b , range2b):
+			if i == 0:
+				continue
+			CurrentDenominator = (SimplifiedNumeratorNeg / i)
+			if (CurrentDenominator == (int(CurrentDenominator))):
+				FactorsOfSimplifiedNumeratorNeg.append(i)
+		#Factors of Bottom:
+		for i in range(1 , (Bottom + 1)):
+			CurrentBottom = (Bottom / i)
+			if (CurrentBottom == (int(CurrentBottom))):
+				FactorsOfBottom.append(i)
+		
+		#Find the common factors between Bottom and SimplifiedNumeratorPos:
+		for i in FactorsOfSimplifiedNumeratorPos:
+			if (i in FactorsOfBottom):
+				CommonFactorsOfNumPosAndBottom.append(i)
+
+		#Find the common factors between Bottom and SimplifiedNumeratorNeg:
+		for i in FactorsOfSimplifiedNumeratorNeg:
+			if (i in FactorsOfBottom):
+				CommonFactorsOfNumNegAndBottom.append(i)
+
+		#Find the GCF for each:
+		GCFNumPos = CommonFactorsOfNumPosAndBottom[(len(CommonFactorsOfNumPosAndBottom) - 1)]
+		GCFNumNeg = CommonFactorsOfNumNegAndBottom[(len(CommonFactorsOfNumNegAndBottom) - 1)]
+
+		#Do the actual simplification:
+		SimplifiedNumeratorPos = int((SimplifiedNumeratorPos / GCFNumPos))
+		BottomA = Bottom
+		BottomA = int((BottomA / GCFNumPos))
+		#Eliminate any ones, zeros, or what have you:
+		TestIfCanBeSimplifiedFurthur = (SimplifiedNumeratorPos / BottomA)
+		if (TestIfCanBeSimplifiedFurthur == int(TestIfCanBeSimplifiedFurthur)):
+			x1 = (str(int(TestIfCanBeSimplifiedFurthur)))
+		else:
+			SimplifiedNumeratorPos = str(SimplifiedNumeratorPos)
+			BottomA = str(BottomA)
+			x1 = (SimplifiedNumeratorPos + '/' + BottomA)
+
+		#Do the actual simplification:
+		SimplifiedNumeratorNeg = int((SimplifiedNumeratorNeg / GCFNumNeg))
+		BottomB = Bottom
+		BottomB = int((BottomB / GCFNumNeg))
+		#Eliminate any ones, zeros, or what have you:
+		TestIfCanBeSimplifiedFurthur = (SimplifiedNumeratorNeg / BottomB)
+		if (TestIfCanBeSimplifiedFurthur == int(TestIfCanBeSimplifiedFurthur)):
+			x2 = (str(int(TestIfCanBeSimplifiedFurthur)))
+		else:
+			SimplifiedNumeratorNeg = str(SimplifiedNumeratorNeg)
+			BottomB = str(BottomB)
+			x2 = (SimplifiedNumeratorNeg + '/' + BottomB)
+
 	else:
 		x1 = (FirstSideSolveResult + ' + ' + RightSideSolveResult)
 		x2 = (FirstSideSolveResult + ' - ' + RightSideSolveResult)
