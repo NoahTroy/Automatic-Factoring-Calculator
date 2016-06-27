@@ -13,10 +13,81 @@ except:
 	print('\nThere was an error processing your input. \nPlease make sure all of your terms are valid integers and try again.')
 	exit()
 	
+#Check to make sure the a-term isn't an integer, for if it is, it will cause a ZeroDivisionError, and the input wouldn't be a polynomial, but a linear equation:
+if a == 0:
+	print('Your a-term is a zero. This means that your equation is linear and not a polynomial, and therefore isn\'t applicable to work with this calculator.')
+	exit()
+	
 	
 	
 #import the math module for solving the more complicated math (such as finding square roots), and the pickle module for loading and reading (and creating if necessary) the data file containing the powers list. In addition, import os to test for the necessary data file.
 import math , pickle , os
+
+
+#Define a function to find and return the greatest common factor between two numbers:
+def FindGCF(Num1 , Num2):
+	#Define a function to accept a number, find its ranges, then return a list of its factors:
+	def FindFactors(Num):
+	#Make sure the number is an integer, before we find its factors:
+		try:
+			Num = int(Num)
+		#If an error occurs, print an error message and stop the code:
+		except ValueError as ErrorMessage:
+			print('Please make sure the the numbers entered as arguments are valid integers.')
+			print('Value Error:\t' , ErrorMessage)
+			exit()
+		except :
+			print('An unknown error has occurred. Please check the validity of your supplied arguments and/or this function\'s code.')
+			exit()
+		
+		#Now that we know the number is an integer, define a factors list:
+		Factors = []
+		
+		#Find the range of the number, in order to cycle through all possible factors, both negative and positive:
+		if Num < 0:
+			range1 = Num
+			range2 = (((Num - Num) - Num) + 1)
+		elif Num > 0:
+			range1 = ((Num - Num) - Num)
+			range2 = (Num + 1)
+		else:
+			Factors.append(1)
+			return Factors
+		
+		#Find the factors of Num:
+		for i in range(range1 , range2):
+			#Skip over 0, as to prevent a DivisionByZeroError:
+			if i == 0:
+				continue
+			IsInt = (Num / i)
+			if (IsInt == (int(IsInt))):
+				Factors.append(i)
+		
+		#Return the list of factors:
+		return Factors
+
+
+	#Run the function to find the factors for each argument provided:
+	FactorsOfNum1 = FindFactors(Num1)		
+	FactorsOfNum2 = FindFactors(Num2)
+			
+	#Declare a common factors variable:
+	CommonFactors = []
+	
+	#Find the common factors between Num1 and Num2:
+	for i in FactorsOfNum1:
+		if (i in FactorsOfNum2):
+			CommonFactors.append(i)
+	
+	#Assuming that we are being supplied with the numerator and denominator of a fraction, and that the numerator is Num1 and the denominator is Num2, we want to declare a negative GCF if the denominator is a negative number and vice versa [this will still be fine even if the function isn't being used for fraction simplification]:
+	if Num2 < 0:
+		GCF = CommonFactors[0]
+	else:
+		GCF = CommonFactors[(len(CommonFactors) - 1)]
+	
+	#Return the greatest common factor:
+	return GCF
+
 
 #Solve to get one number under the square root:
 UnderSqrt = ((b**2)-(4*(a)*(c)))
@@ -99,7 +170,7 @@ if len(quotientsthatareints) == 0:
 	OriginalDivisor = Divisor
 	
 
-#If the number can be simplified, than we will follow the process below,to simplify it and return the correct and accurate result:				
+#If the number can be simplified, we will follow the process below, to simplify it and return the correct and accurate result:				
 else:
 	#Find and convert  the biggest divisor to be returned as (possibly only part of) the answer:
 	#The index in the list of the greatest divisor found:
@@ -120,58 +191,14 @@ else:
 	#Save the original divisor, before being simplified, for use when solving for the front half of the equation:
 	OriginalDivisor = Divisor
 	
-	#Find the correct range for the divisor, depending on whether or not it is negative:
-	if (Divisor > 0):
-		range1 = 1
-		range2 = (Divisor + 1)
-	elif (Divisor < 0):
-		range1 = Divisor
-		range2 = (((Divisor - Divisor) - Divisor) + 1)
-	else:
-		##############################################FIX##############################################
-		print('YOUR A-TERM IS A ZERO, THIS IS UNACCEPTABLE AT THE MOMENT AND HAS CRASHED MY CALCULATOR!!!')
-		exit()
-		##############################################FIX##############################################
-	
-	#Define a list of factors for the divisors, and also a common factors list:
-	FactorsForDivisor = []
-	FactorsForbiggestdivisorsimplified = []
-	CommonFactors = []
-
-	#Factors of Divisor
-	for i in range(range1 , range2):
-		if i == 0:
-			continue
-		CurrentDivisor = (Divisor / i)
-		if (CurrentDivisor == (int(CurrentDivisor))):
-			FactorsForDivisor.append(i)
-	#Factors of biggestdivisorsimplified:
-	for i in range(1 , (biggestdivisorsimplified + 1)):
-		CurrentDivisor2 = (biggestdivisorsimplified / i)
-		if (CurrentDivisor2 == (int(CurrentDivisor2))):
-			FactorsForbiggestdivisorsimplified.append(i)
-
-		#Find the common factors:
-	for i in FactorsForDivisor:
-		if (i in FactorsForbiggestdivisorsimplified):
-			CommonFactors.append(i)
-	#Find the greatest common factor:
-	GCFindex = (len(CommonFactors) - 1)
-	if GCFindex >= 0:
-		GCF = CommonFactors[GCFindex]
-	else:
-		GCF = -1
+	#Find the GCF to simplify the Divisor and the biggestdivisorsimplified:
+	GCF = FindGCF(biggestdivisorsimplified , Divisor)
 
 	#Now simplify both the Divisor and the biggestdivisorsimplified:
 	Divisor = (Divisor / GCF)
 	biggestdivisorsimplified = (biggestdivisorsimplified / GCF)
 	Divisor = int(Divisor)
 	biggestdivisorsimplified = int(biggestdivisorsimplified)
-
-	#Put the negatives in their rightful place:
-	if ((Divisor < 0) and (biggestdivisorsimplified >= 0)):
-		Divisor = ((Divisor - Divisor) - Divisor)
-		biggestdivisorsimplified = ((biggestdivisorsimplified - biggestdivisorsimplified) - biggestdivisorsimplified)
 	
 	#Assign the final results for under the square root to UnderSqrtResult in the correct format/syntax:
 	#If the remainder is a one, get rid of it:
@@ -229,77 +256,13 @@ Bottom = int(Divisor)
 
 
 
-#Now we will simplify he first or left half of the equation:
+#Now we will simplify the first or left half of the equation:
 #Define the Numerator and the Denominator:
 Numerator = ((b-b)-b)
 Denominator = OriginalDivisor
 
-#Define a list of factors for the Numerator and the Denominator:
-FactorsForNumerator = []
-FactorsForDenominator = []
-CommonFactors = []
-
-#Find the ranges for the Numerator and Denominator:
-if Numerator < 0:
-	range1 = Numerator
-	range2 = ((Numerator - Numerator) - Numerator)
-elif Numerator > 0:
-	range1 = ((Numerator - Numerator) - Numerator)
-	range2 = Numerator
-else:
-	######################################FIX######################################
-	print('NO SUPPORT YET!!!!!! GO AWAY!!!!!!!')
-	exit()
-	######################################FIX######################################
-if Denominator < 0:
-	range1b = Denominator
-	range2b = ((Denominator - Denominator) - Denominator)
-elif Denominator > 0:
-	range1b = ((Denominator - Denominator) - Denominator)
-	range2b = Denominator
-else:
-	######################################FIX######################################
-	print('NO SUPPORT YET!!!!!! GO AWAY!!!!!!!')
-	exit()
-	######################################FIX######################################
-
-#Factors of Numerator:
-for i in range(range1 , range2):
-	if i == 0:
-		continue
-	CurrentNumerator = (Numerator / i)
-	if (CurrentNumerator == (int(CurrentNumerator))):
-		FactorsForNumerator.append(i)
-#Factors of Denominator:
-for i in range(range1b , range2b):
-	if i == 0:
-		continue
-	CurrentDenominator = (Denominator / i)
-	if (CurrentDenominator == (int(CurrentDenominator))):
-		FactorsForDenominator.append(i)
-		
-	#Find the common factors:
-for i in FactorsForNumerator:
-	if (i in FactorsForDenominator):
-		CommonFactors.append(i)
-#Find the greatest common factor:
-GCFa = CommonFactors[(len(CommonFactors) - 1)]
-GCFb = CommonFactors[0]
-#Make sure we find the factor's absolute value, and judge it as greatest because of that:
-#Convert all possible GCFs to positive numbers, to help determine their absolute values:
-if GCFb < 0:
-	GCFb2 = ((GCFb - GCFb) - GCFb)
-else:
-	GCFb2 = GCFb
-if GCFa < 0:
-	GCFa2 = ((GCFa - GCFa) - GCFa)
-else:
-	GCFa2 = GCFa
-#Determine which has the greatest absolute value, an assign it as the GCF:
-if GCFa2 > GCFb2:
-	GCF = GCFa
-else:
-	GCF = GCFb
+#Find the GCF between Numerator and Denominator:
+GCF = FindGCF(Numerator , Denominator)	
 
 #Now simplify both the Divisor and the biggestdivisorsimplified:
 Numerator = (Numerator / GCF)
@@ -351,75 +314,15 @@ else:
 			Bottom = ((Bottom - Bottom) - Bottom)
 			SimplifiedNumeratorPos = int(SimplifiedNumeratorPos)
 			SimplifiedNumeratorPos = ((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos)
-			
-
-
-
-		#We must now find all of the common factors, then find the greatest common factor, and divide each by the GCF, to simplify the numbers even further:
-		FactorsOfSimplifiedNumeratorPos = []
-		FactorsOfSimplifiedNumeratorNeg = []
-		FactorsOfBottom = []
-		CommonFactorsOfNumPosAndBottom = []
-		CommonFactorsOfNumNegAndBottom = []
 		
-		#Identify the ranges for SimplifiedNumeratorPos and SimplifiedNumeratorNeg:
+		
+		#Find the GCF between SimplifiedNumeratorPos and Bottom, and SimplifiedNumeratorNeg and Bottom:
 		#First convert each back into integers:
 		SimplifiedNumeratorPos = int(SimplifiedNumeratorPos)
 		SimplifiedNumeratorNeg = int(SimplifiedNumeratorNeg)
-
-		if SimplifiedNumeratorPos < 0:
-			range1 = SimplifiedNumeratorPos
-			range2 = (((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos) + 1)
-		elif SimplifiedNumeratorPos > 0:
-			range1 = ((SimplifiedNumeratorPos - SimplifiedNumeratorPos) - SimplifiedNumeratorPos)
-			range2 = (SimplifiedNumeratorPos + 1)
-		else:
-			print('UNKNOWN ERROR')
-			exit()
-
-		if SimplifiedNumeratorNeg < 0:
-			range1b = SimplifiedNumeratorNeg
-			range2b = (((SimplifiedNumeratorNeg - SimplifiedNumeratorNeg) - SimplifiedNumeratorNeg) + 1)
-		elif SimplifiedNumeratorNeg > 0:
-			range1b = ((SimplifiedNumeratorNeg - SimplifiedNumeratorNeg) - SimplifiedNumeratorNeg)
-			range2b = (SimplifiedNumeratorNeg + 1)
-		else:
-			print('UNKNOWN ERROR')
-			exit()
-
-		#Factors of SimplifiedNumeratorPos:
-		for i in range(range1 , range2):
-			if i == 0:
-				continue
-			CurrentNumerator = (SimplifiedNumeratorPos / i)
-			if (CurrentNumerator == (int(CurrentNumerator))):
-				FactorsOfSimplifiedNumeratorPos.append(i)
-		#Factors of SimplifiedNumeratorNeg:
-		for i in range(range1b , range2b):
-			if i == 0:
-				continue
-			CurrentDenominator = (SimplifiedNumeratorNeg / i)
-			if (CurrentDenominator == (int(CurrentDenominator))):
-				FactorsOfSimplifiedNumeratorNeg.append(i)
-		#Factors of Bottom:
-		for i in range(1 , (Bottom + 1)):
-			CurrentBottom = (Bottom / i)
-			if (CurrentBottom == (int(CurrentBottom))):
-				FactorsOfBottom.append(i)
 		
-		#Find the common factors between Bottom and SimplifiedNumeratorPos:
-		for i in FactorsOfSimplifiedNumeratorPos:
-			if (i in FactorsOfBottom):
-				CommonFactorsOfNumPosAndBottom.append(i)
-
-		#Find the common factors between Bottom and SimplifiedNumeratorNeg:
-		for i in FactorsOfSimplifiedNumeratorNeg:
-			if (i in FactorsOfBottom):
-				CommonFactorsOfNumNegAndBottom.append(i)
-
-		#Find the GCF for each:
-		GCFNumPos = CommonFactorsOfNumPosAndBottom[(len(CommonFactorsOfNumPosAndBottom) - 1)]
-		GCFNumNeg = CommonFactorsOfNumNegAndBottom[(len(CommonFactorsOfNumNegAndBottom) - 1)]
+		GCFNumPos = FindGCF(SimplifiedNumeratorPos , Bottom)
+		GCFNumNeg = FindGCF(SimplifiedNumeratorNeg , Bottom)	
 
 		#Do the actual simplification:
 		SimplifiedNumeratorPos = int((SimplifiedNumeratorPos / GCFNumPos))
