@@ -1,3 +1,7 @@
+##########################################
+#	Written by Noah Troy, 2016	 #
+##########################################
+
 #Gather input for the three terms of the polynomial:
 print('Please Enter The a, b, and c terms from the polynomial \nyou wish to have factored.\nPlease make sure the terms are from a polynomial in standard form, ie: \nax^2+bx+c\n')
 a = input('a-term:\t')
@@ -120,8 +124,18 @@ else:
 #Load the list of powers if applicable. If the list doesn't exist and/or can't be found, than create the list then load it:
 if os.path.isfile('List Of Powers.dat'):
 	PowersListFile = open('List Of Powers.dat' , 'rb')
-	ListOfPowers = pickle.load(PowersListFile)
-	PowersListFile.close()
+	
+	#Make sure that the file wasn't edited or changed to make it unreadable; if it was, present an error and instruct the user to delete the file then restart the calculator:
+	try:
+		ListOfPowers = pickle.load(PowersListFile)
+		PowersListFile.close()
+	except pickle.UnpicklingError:
+		print('\n\n\nERROR\nDid you open, edit, change, etc. the "List Of Powers.dat" file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
+		exit()
+	except:
+		print('UNKNOWN ERROR\nDid you open, edit, change, etc. the "List Of Powers.dat file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
+		exit()
+		
 else:
 	ListOfPowers = []
 	for i in range(2 , 100001):
@@ -158,7 +172,11 @@ if len(quotientsthatareints) == 0:
 	else:
 		if not HayImaginaryUnit:
 			UnderSqrt = str(UnderSqrt)
-			UnderSqrtResult = ('√' + UnderSqrt)
+			#If UnderSqrt is equal to 1, just get rid of the square root sign, and let simplification later get rid of the 1:
+			if UnderSqrt == '1':
+				UnderSqrtResult = (UnderSqrt)
+			else:
+				UnderSqrtResult = ('√' + UnderSqrt)
 		else:
 			UnderSqrt = str(UnderSqrt)
 			UnderSqrtResult = ('i ' + '√' + UnderSqrt)
@@ -216,13 +234,22 @@ else:
 		if not HayImaginaryUnit:
 			biggestdivisorsimplified = str(biggestdivisorsimplified)
 			remainder = str(remainder)
-			UnderSqrtResult = (biggestdivisorsimplified + '√' + remainder)
+			#Check to see if biggestdivisorsimplified is equal to 1; if it is, just get rid of it:
+			if biggestdivisorsimplified == '1':
+				UnderSqrtResult = ('√' + remainder)
+			else:
+				UnderSqrtResult = (biggestdivisorsimplified + '√' + remainder)
 			biggestdivisorsimplified = int(biggestdivisorsimplified)
 			remainder = int(remainder)
 		else:
 			biggestdivisorsimplified = str(biggestdivisorsimplified)
 			remainder = str(remainder)
-			UnderSqrtResult = (biggestdivisorsimplified + 'i' + '√' + remainder)
+			
+			#Check to see if biggestdivisorsimplified is equal to 1; if it is, just get rid of it:
+			if biggestdivisorsimplified == '1':
+				UnderSqrtResult = ('i' + '√' + remainder)
+			else:
+				UnderSqrtResult = (biggestdivisorsimplified + 'i' + '√' + remainder)
 			biggestdivisorsimplified = int(biggestdivisorsimplified)
 			remainder = int(remainder)
 
