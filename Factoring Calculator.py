@@ -2,11 +2,60 @@
 #	Written by Noah Troy, 2016	 #
 ##########################################
 
+#import the math module for solving the more complicated math (such as finding square roots), and the pickle module for loading and reading (and creating if necessary) the data file containing the powers list. In addition, import os to test for the necessary data file and threading to run multiple processes at once (Creating/Loading the powers list whilst waiting for input):
+import math , pickle , os , threading
+
+
+
+#Define a function now (becuase we need it to thread before we gather input) to load the list of powers if applicable. If the list doesn't exist and/or can't be found, than create the list then load it:
+def PowersListLoad():
+	
+	#Declare ListOfPowers as a global variable, so that it may be accessed outside of the function, once the function completes:
+	global ListOfPowers
+	
+	if os.path.isfile('List Of Powers.dat'):
+		PowersListFile = open('List Of Powers.dat' , 'rb')
+		
+		#Make sure that the file wasn't edited or changed to make it unreadable; if it was, present an error and instruct the user to delete the file then restart the calculator:
+		try:
+			ListOfPowers = pickle.load(PowersListFile)
+			PowersListFile.close()
+		except pickle.UnpicklingError:
+			print('\n\n\nERROR\nDid you open, edit, change, etc. the "List Of Powers.dat" file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
+			exit()
+		except:
+			print('UNKNOWN ERROR\nDid you open, edit, change, etc. the "List Of Powers.dat file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
+			exit()
+			
+	else:
+		ListOfPowers = []
+		for i in range(2 , 100001):
+			x = i
+			x *= x
+			ListOfPowers.append(x)
+		PowersListFile = open('List Of Powers.dat' , 'wb')
+		pickle.dump(ListOfPowers , PowersListFile)
+		PowersListFile.close()
+		
+		PowersListFile = open('List Of Powers.dat' , 'rb')
+		ListOfPowers = pickle.load(PowersListFile)
+		PowersListFile.close()
+		
+
+#Create a thread for the PowersListLoad function, then start the thread:
+PowersListLoadThread = threading.Thread(target = PowersListLoad , args = ())
+PowersListLoadThread.start()
+
+
+
 #Gather input for the three terms of the polynomial:
 print('Please Enter The a, b, and c terms from the polynomial \nyou wish to have factored.\nPlease make sure the terms are from a polynomial in standard form, ie: \nax^2+bx+c\n')
 a = input('a-term:\t')
 b = input('b-term:\t')
 c = input('c-term:\t')
+
+#After gathering the input, wait until sure that the PowersListLoadThread is completely finished:
+PowersListLoadThread.join()
 
 #Convert inputs to integers:
 try:
@@ -23,9 +72,6 @@ if a == 0:
 	exit()
 	
 	
-	
-#import the math module for solving the more complicated math (such as finding square roots), and the pickle module for loading and reading (and creating if necessary) the data file containing the powers list. In addition, import os to test for the necessary data file.
-import math , pickle , os
 
 
 #Define a function to find and return the greatest common factor between two numbers:
@@ -119,36 +165,6 @@ if '-' in UnderSqrt:
 	HayImaginaryUnit = True
 else:
 	UnderSqrt = int(UnderSqrt)
-
-
-#Load the list of powers if applicable. If the list doesn't exist and/or can't be found, than create the list then load it:
-if os.path.isfile('List Of Powers.dat'):
-	PowersListFile = open('List Of Powers.dat' , 'rb')
-	
-	#Make sure that the file wasn't edited or changed to make it unreadable; if it was, present an error and instruct the user to delete the file then restart the calculator:
-	try:
-		ListOfPowers = pickle.load(PowersListFile)
-		PowersListFile.close()
-	except pickle.UnpicklingError:
-		print('\n\n\nERROR\nDid you open, edit, change, etc. the "List Of Powers.dat" file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
-		exit()
-	except:
-		print('UNKNOWN ERROR\nDid you open, edit, change, etc. the "List Of Powers.dat file?\nWe have detected an issue with the file corresponding with unauthorized editing.\nTo fix this error, please delete the file, then restart the calculator and run a test problem.\nWe will then automatically regenerate the data file in the correct format.\nIn the future, please refrain from opening this file, thanks!')
-		exit()
-		
-else:
-	ListOfPowers = []
-	for i in range(2 , 100001):
-		x = i
-		x *= x
-		ListOfPowers.append(x)
-	PowersListFile = open('List Of Powers.dat' , 'wb')
-	pickle.dump(ListOfPowers , PowersListFile)
-	PowersListFile.close()
-	
-	PowersListFile = open('List Of Powers.dat' , 'rb')
-	ListOfPowers = pickle.load(PowersListFile)
-	PowersListFile.close()
 	
 
 #Create a list of quotients that evenly divide up the number under the square root, so that we may later simplify it:
